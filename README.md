@@ -83,10 +83,27 @@ github-flow 방식을 체험하면서 진정한 git의 매력를 느끼게 되�
 너무 많은 것을 얻어가게 해 주신 스터디장님과 스터디원분들에게 진심으로 감사드립니다.  
 
 - 이윤지 [zion830](https://github.com/zion830)
-[공간](https://github.com/StudyFork/GoogryAndroidArchitectureStudy/tree/master/zion830)
+[공간](https://github.com/StudyFork/GoogryAndroidArchitectureStudy/tree/master/zion830)    
+두 달이라는 시간이 길 것만 같았는데 눈 깜짝할 사이에 지나갔네요.
+이 스터디 덕분에 아키텍처 패턴을 적용하는 방법을 체계적으로 공부할 수 있었습니다.
+뿐만 아니라, 개발에 도움이 되는 많은 꿀팁(설정, 플러그인 등)을 알게 되어 신세계를 맛보았습니다.
+학생 입장에서 이렇게 꼼꼼한 코드 리뷰를 받아볼 기회는 거의 없는데, 체계적인 방식으로 코드 리뷰를 경험할 수 있어 좋았습니다.
+덕분에 코드를 작은 부분이라도 생각 없이 작성하면 안된다는 큰 교훈을 얻게 되었어요.
+스터디를 통해 좋은 학습 동료 분들도 만날 수 있었습니다. 함께 스터디에 참여한 모든 분들이 정말 개발을 좋아하고 열심히 하는 분들이었습니다.
+훌륭한 개발자분들과 함께 공부할 수 있어서 행운이었고 모두 귀중한 경험이 되었습니다.
+안드로이드 개발자 분들에게는 이 스터디가 매우 강렬하고 특별한 경험이 되실 거라고 장담합니다.
+멘토님과 스터디원분들 덕에 많은 것을 얻어갈 수 있었습니다. 정말 감사합니다. 😃
 
 - 정상용 [NackUn](https://github.com/NackUn)
 [공간](https://github.com/StudyFork/GoogryAndroidArchitectureStudy/tree/master/NackUn)
+스터디를 들어야하는 7가지 이유.txt
+1. 가격 : 가격을 보고 망설이지 마세요. 어디 가서 돈 주고도 못 배울 만한 것들을 배웁니다.
+2. 학습 : 과외가 아니라 스터디입니다. 직접 공부하고 코드를 짤 수 있게 과제로(강제로) 만들어드립니다.
+3. 목표 : 목표했던 MVP, MVVM, DataBinding, AAC 뿐만 아니라 툴 사용법, 현업, 코드 작성법 등을 배울 수 있습니다.
+4. 리뷰 : 개판으로 짜던 나의 코드를 파트너(현석님 감사합니다!)와의 리뷰를 통해 사람답게 만들어나가고 있습니다.
+5. 멘토 : 사람이 된 줄 알았던 나의 코드가 아직 멀었습니다. 멘토(석준)님의 리뷰로 현실을 깨닫습니다.
+6. 동료 : 나보다 훨씬 잘하면서도 열심히 공부하시는 동료들을 보면서 동기부여를 받고 친절한 동료들의 도움으로 더 이해하기 편했습니다.
+7. 현실 : 현업(개발자 2인 스타트업) 5개월보다 멘토(석준)님과 스터디원분들과 함께한 8주에 더 많은 것을 배웠습니다.
 
 - 오지수 [machine-human](https://github.com/machine-human)
 [공간](https://github.com/StudyFork/GoogryAndroidArchitectureStudy/tree/master/machine-human)
