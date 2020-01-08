@@ -2,6 +2,8 @@ package sample.nackun.com.studyfirst.ui.ticker
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import sample.nackun.com.studyfirst.base.BaseViewModel
 import sample.nackun.com.studyfirst.data.Repository
 import sample.nackun.com.studyfirst.util.TickerFormatter
@@ -40,14 +42,19 @@ class TickerViewModel(
 
     fun showTickers(marketLike: String?) {
         marketLike?.let {
-            repository.requestMarkets(
-                it,
-                onTickersLoaded = { tickers ->
-                    onTickersLoaded(tickers)
-                }, onError = { error ->
-                    onError(error)
-                }
-            )
+            repository.requestMarket()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap { data ->
+                    repository.requestTicker(data.filter {
+                        it.market.startsWith(marketLike)
+                    }.joinToString { it.market })
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                }.subscribe(
+                    { onTickersLoaded(it) },
+                    { it }
+                )
         } ?: onError(IllegalStateException("Selected Market is not exist"))
     }
 }
