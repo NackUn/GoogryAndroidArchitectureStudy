@@ -42,19 +42,21 @@ class TickerViewModel(
 
     fun showTickers(marketLike: String?) {
         marketLike?.let {
-            repository.requestMarket()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap { data ->
-                    repository.requestTicker(data.filter {
-                        it.market.startsWith(marketLike)
-                    }.joinToString { it.market })
-                        .subscribeOn(Schedulers.computation())
-                        .observeOn(AndroidSchedulers.mainThread())
-                }.subscribe(
-                    { onTickersLoaded(it) },
-                    { it }
-                )
+            addDisposable(
+                repository.requestMarket()
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .flatMap { data ->
+                        repository.requestTicker(data.filter {
+                            it.market.startsWith(marketLike)
+                        }.joinToString { it.market })
+                            .subscribeOn(Schedulers.computation())
+                            .observeOn(AndroidSchedulers.mainThread())
+                    }.subscribe(
+                        { onTickersLoaded(it) },
+                        { it }
+                    )
+            )
         } ?: onError(IllegalStateException("Selected Market is not exist"))
     }
 }
