@@ -1,9 +1,49 @@
 package sample.nackun.com.studyfirst.util
 
 import android.graphics.Color
+import sample.nackun.com.studyfirst.vo.BithumbTicker
 import sample.nackun.com.studyfirst.vo.Ticker
+import sample.nackun.com.studyfirst.vo.UpbitTicker
 
 object TickerFormatter {
+    fun combine(
+        upbitTickers: List<UpbitTicker>,
+        bithumbTickers: List<BithumbTicker>
+    ): List<Ticker> {
+        val combineList = mutableListOf<Ticker>()
+        combineList.clear()
+
+        upbitTickers.forEach { upbitTicker ->
+            combineList.add(
+                toTicker(upbitTicker)
+            )
+            bithumbTickers.find { bithumbTicker ->
+                upbitTicker.market.split("-")[1].equals(bithumbTicker.market)
+            }?.let { bithumbTicker ->
+                combineList.add(
+                    toTicker(bithumbTicker)
+                )
+            }
+        }
+        return combineList
+    }
+
+    fun toTicker(upbitTicker: UpbitTicker): Ticker = Ticker(
+        upbitTicker.accTradePrice24h,
+        upbitTicker.changePrice,
+        upbitTicker.market,
+        upbitTicker.prevClosingPrice,
+        upbitTicker.tradePrice
+    )
+
+    fun toTicker(bithumbTicker: BithumbTicker): Ticker = Ticker(
+        bithumbTicker.accTradeValue24H,
+        bithumbTicker.fluctate24H,
+        bithumbTicker.market,
+        bithumbTicker.prevClosingPrice,
+        bithumbTicker.closingPrice
+    )
+
     fun convertTo(target: List<Ticker>): List<Map<String, String>> {
         val convertList = mutableListOf<Map<String, String>>()
         convertList.clear()
