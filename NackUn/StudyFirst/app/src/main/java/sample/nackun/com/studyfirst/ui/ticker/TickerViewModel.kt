@@ -1,16 +1,21 @@
 package sample.nackun.com.studyfirst.ui.ticker
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import sample.nackun.com.studyfirst.base.BaseViewModel
-import sample.nackun.com.studyfirst.data.Repository
+import sample.nackun.com.studyfirst.data.bithumb.BithumbRepository
+import sample.nackun.com.studyfirst.data.upbit.UpbitRepository
 import sample.nackun.com.studyfirst.util.TickerFormatter
+import sample.nackun.com.studyfirst.vo.BithumbTicker
 import sample.nackun.com.studyfirst.vo.Ticker
+import sample.nackun.com.studyfirst.vo.UpbitTicker
 
 class TickerViewModel(
-    private val repository: Repository
+    private val upbitRepository: UpbitRepository,
+    private val bithumbRepository: BithumbRepository
 ) : BaseViewModel() {
 
     private val firstMarketName = "KRW"
@@ -22,6 +27,8 @@ class TickerViewModel(
     private val _errMsg = MutableLiveData<Throwable>()
     val errMsg: LiveData<Throwable> get() = _errMsg
 
+    private val bithumbTickers = mutableListOf<BithumbTicker>()
+
     init {
         _tickers.value = mutableListOf()
         _selectedMarket.value = firstMarketName
@@ -29,6 +36,10 @@ class TickerViewModel(
 
     private fun onError(t: Throwable) {
         _errMsg.value = t
+    }
+
+    private fun toTickers(upbitTickers: List<UpbitTicker>, bithumbTickers: List<BithumbTicker>) {
+        onTickersLoaded(TickerFormatter.combine(upbitTickers, bithumbTickers))
     }
 
     private fun onTickersLoaded(tickers: List<Ticker>) {
@@ -42,21 +53,65 @@ class TickerViewModel(
 
     fun showTickers(marketLike: String?) {
         marketLike?.let {
+            if (it.equals("KRW")) {
+                addDisposable(
+                    bithumbRepository.requestAllTicker()
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            {
+                                it.bithumbData.filterKeys {
+                                    !it.equals("date")
+                                }.let {
+                                    for ((key, value) in it) {
+                                        val temp = value.toString().replace("{", "")
+                                            .replace("}", "").split(",")
+                                        val map = HashMap<String, String>()
+                                        for (i in temp) {
+                                            val temp2 = i.trim().split("=")
+                                            map.put(temp2[0], temp2[1])
+                                        }
+                                        val accTradeValue24H = map["acc_trade_value_24H"]?.toDouble() ?: 0.0
+                                        val fluctate24H = map["fluctate_24H"]?.toDouble() ?: 0.0
+                                        val market = key
+                                        val prevClosingPrice = map["prev_closing_price"]?.toDouble() ?: 0.0
+                                        val closingPrice = map["closing_price"]?.toDouble() ?: 0.0
+
+                                        bithumbTickers.add(
+                                            BithumbTicker(
+                                                accTradeValue24H,
+                                                fluctate24H,
+                                                market,
+                                                prevClosingPrice,
+                                                closingPrice
+                                            )
+                                        )
+                                    }
+                                }
+                            },
+                            {
+                                Log.e("aa12", it.toString())
+                            }
+                        )
+                )
+            }
             addDisposable(
-                repository.requestMarket()
+                upbitRepository.requestMarket()
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .flatMap { data ->
-                        repository.requestTicker(data.filter {
+                        upbitRepository.requestTicker(data.filter {
                             it.market.startsWith(marketLike)
                         }.joinToString { it.market })
                             .subscribeOn(Schedulers.computation())
                             .observeOn(AndroidSchedulers.mainThread())
                     }.subscribe(
-                        { onTickersLoaded(it) },
-                        { it }
+                        {
+                            toTickers(it, bithumbTickers)
+                        },
+                        { Log.e("aa12", it.toString()) }
                     )
             )
-        } ?: onError(IllegalStateException("Selected Market is not exist"))
+        } ?: onError(IllegalStateException("Selected UpbitMarket is not exist"))
     }
 }
