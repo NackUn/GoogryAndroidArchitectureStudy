@@ -3,7 +3,7 @@ package sample.nackun.com.studyfirst
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import sample.nackun.com.studyfirst.di.getNetworkModule
+import sample.nackun.com.studyfirst.di.networkModule
 import sample.nackun.com.studyfirst.di.remoteModule
 import sample.nackun.com.studyfirst.di.repositoryModule
 import sample.nackun.com.studyfirst.di.viewModelModule
@@ -17,7 +17,7 @@ class MainApplication : Application() {
             androidContext(this@MainApplication)
             modules(
                 listOf(
-                    getNetworkModule("https://api.upbit.com/"),
+                    networkModule,
                     repositoryModule,
                     remoteModule,
                     viewModelModule
