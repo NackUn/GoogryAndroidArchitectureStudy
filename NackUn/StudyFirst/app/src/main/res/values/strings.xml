@@ -3,7 +3,6 @@
     <string name="exchange">업비트(Upbit)</string>
     <string name="marketKRW">KRW</string>
     <string name="marketBTC">BTC</string>
-    <string name="marketETH">ETH</string>
     <string name="marketUSDT">USDT</string>
     <string name="coinName">코인명</string>
     <string name="currentPrice">현재가</string>

@@ -50,16 +50,6 @@
                     android:textColor="@{vm.selectedMarket.equals(@string/marketBTC) ? @color/indigo : @color/grey}"
                     android:onClick="@{(v)->vm.selectedMarket(@string/marketBTC)}"/>
             <TextView
-                    android:id="@+id/tv_market_eth"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/marketETH"
-                    android:textSize="20sp"
-                    android:gravity="center"
-                    android:textColor="@{vm.selectedMarket.equals(@string/marketETH) ? @color/indigo : @color/grey}"
-                    android:onClick="@{(v)->vm.selectedMarket(@string/marketETH)}"/>
-            <TextView
                     android:id="@+id/tv_market_usdt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
