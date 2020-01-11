@@ -1,8 +1,8 @@
-package sample.nackun.com.studyfirst.data
+package sample.nackun.com.studyfirst.data.upbit
 
-class RepositoryImpl(
-    private val remoteDataSource: DataSource
-) : Repository {
+class UpbitRepositoryImpl(
+    private val remoteDataSource: UpbitDataSource
+) : UpbitRepository {
     override fun requestMarket() =
         remoteDataSource.requestMarket()
 
