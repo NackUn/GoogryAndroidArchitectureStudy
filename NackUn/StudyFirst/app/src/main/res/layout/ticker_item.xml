@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools">
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="java.util.Map"/>
         <variable
@@ -8,61 +8,91 @@
                 type="Map&lt;String,String>"/>
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:background="@drawable/rounded"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:orientation="horizontal"
             android:elevation="2dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:padding="4dp">
+
         <TextView
+                android:id="@+id/tickerName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tickerName"
-                android:textSize="18sp"
-                android:layout_weight="1"
                 android:layout_gravity="center"
-                android:textStyle="bold"
                 android:paddingStart="4dp"
                 android:paddingEnd="2dp"
                 android:text="@{tickerItem[`tickerName`]}"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/currentPrice"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="BTC"/>
+
         <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:id="@+id/currentPrice"
-                android:textSize="14sp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:layout_gravity="center"
-                android:text="@{tickerItem[`currentPrice`]}"
-                tools:text="9,525,000"/>
-        <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/comparePrice"
-                android:textSize="14sp"
-                android:layout_weight="1"
-                android:gravity="end"
                 android:layout_gravity="center"
+                android:gravity="end"
+                android:text="@{tickerItem[`currentPrice`]}"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/comparePrice"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/tickerName"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="9,525,000"/>
+
+        <TextView
+                android:id="@+id/comparePrice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="end"
                 android:text="@{tickerItem[`comparePrice`]}"
                 android:textColor="@{Integer.parseInt(tickerItem[`compareColor`])}"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/changePrice"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/currentPrice"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="-2.08%"/>
+
         <TextView
+                android:id="@+id/changePrice"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/changePrice"
-                android:textSize="14sp"
-                android:layout_weight="1"
-                android:gravity="end"
                 android:layout_gravity="center"
                 android:layout_marginEnd="12dp"
+                android:gravity="end"
                 android:text="@{tickerItem[`changePrice`]}"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/exchangeImg"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/comparePrice"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="46,935 M"/>
-    </LinearLayout>
+
+        <ImageView
+                android:id="@+id/exchangeImg"
+                setImg="@{Integer.parseInt(tickerItem[`exchangeImg`])}"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/changePrice"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/upbit_img"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
