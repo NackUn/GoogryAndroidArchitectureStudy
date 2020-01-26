@@ -1,6 +1,7 @@
 package sample.nackun.com.studyfirst.util
 
 import android.graphics.Color
+import sample.nackun.com.studyfirst.R
 import sample.nackun.com.studyfirst.vo.BithumbTicker
 import sample.nackun.com.studyfirst.vo.Ticker
 import sample.nackun.com.studyfirst.vo.UpbitTicker
@@ -33,7 +34,8 @@ object TickerFormatter {
         upbitTicker.changePrice,
         upbitTicker.market,
         upbitTicker.prevClosingPrice,
-        upbitTicker.tradePrice
+        upbitTicker.tradePrice,
+        R.drawable.upbit_img
     )
 
     fun toTicker(bithumbTicker: BithumbTicker): Ticker = Ticker(
@@ -41,7 +43,8 @@ object TickerFormatter {
         bithumbTicker.fluctate24H,
         bithumbTicker.market,
         bithumbTicker.prevClosingPrice,
-        bithumbTicker.closingPrice
+        bithumbTicker.closingPrice,
+        R.drawable.bithumb_img
     )
 
     fun convertTo(target: List<Ticker>): List<Map<String, String>> {
@@ -56,13 +59,16 @@ object TickerFormatter {
                     "currentPrice" to getCurrentPrice(ticker.tradePrice),
                     "comparePrice" to getComparePrice(ticker.tradePrice, ticker.prevClosingPrice),
                     "compareColor" to getCompareColor(ticker.tradePrice, ticker.prevClosingPrice),
-                    "changePrice" to getChangePrice(ticker.accTradePrice24h)
+                    "changePrice" to getChangePrice(ticker.accTradePrice24h),
+                    "exchangeImg" to getMarketImgSrc(ticker.exchangeImg)
                 )
             )
         }
         return convertList
     }
 
+    private fun getMarketImgSrc(exchangeImg: Int) =
+        exchangeImg.toString()
 
     private fun getTickerName(tickerName: String) =
         tickerName.substring(tickerName.indexOf("-") + 1, tickerName.length)

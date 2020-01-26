@@ -5,5 +5,6 @@ data class Ticker(
     val changePrice: Double,
     val market: String,
     val prevClosingPrice: Double,
-    val tradePrice: Double
+    val tradePrice: Double,
+    val exchangeImg: Int
 )
