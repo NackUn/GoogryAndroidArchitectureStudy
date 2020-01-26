@@ -3,6 +3,7 @@ package sample.nackun.com.studyfirst.ui.ticker
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import sample.nackun.com.studyfirst.base.BaseViewModel
@@ -63,29 +64,11 @@ class TickerViewModel(
                                 it.bithumbData.filterKeys {
                                     !it.equals("date")
                                 }.let {
+                                    val gson = Gson()
                                     for ((key, value) in it) {
-                                        val temp = value.toString().replace("{", "")
-                                            .replace("}", "").split(",")
-                                        val map = HashMap<String, String>()
-                                        for (i in temp) {
-                                            val temp2 = i.trim().split("=")
-                                            map.put(temp2[0], temp2[1])
-                                        }
-                                        val accTradeValue24H = map["acc_trade_value_24H"]?.toDouble() ?: 0.0
-                                        val fluctate24H = map["fluctate_24H"]?.toDouble() ?: 0.0
-                                        val market = key
-                                        val prevClosingPrice = map["prev_closing_price"]?.toDouble() ?: 0.0
-                                        val closingPrice = map["closing_price"]?.toDouble() ?: 0.0
-
-                                        bithumbTickers.add(
-                                            BithumbTicker(
-                                                accTradeValue24H,
-                                                fluctate24H,
-                                                market,
-                                                prevClosingPrice,
-                                                closingPrice
-                                            )
-                                        )
+                                        val bithumbTicker = gson.fromJson(value.toString(), BithumbTicker::class.java)
+                                        bithumbTicker.setMarket(key)
+                                        bithumbTickers.add(bithumbTicker)
                                     }
                                 }
                             },

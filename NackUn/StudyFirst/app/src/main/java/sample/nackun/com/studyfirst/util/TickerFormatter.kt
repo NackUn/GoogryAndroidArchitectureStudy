@@ -15,15 +15,18 @@ object TickerFormatter {
         combineList.clear()
 
         upbitTickers.forEach { upbitTicker ->
-            combineList.add(
-                toTicker(upbitTicker)
-            )
             bithumbTickers.find { bithumbTicker ->
-                upbitTicker.market.split("-")[1].equals(bithumbTicker.market)
+                upbitTicker.market.split("-")[1].equals(bithumbTicker.getMarket())
             }?.let { bithumbTicker ->
-                combineList.add(
-                    toTicker(bithumbTicker)
-                )
+                if (bithumbTicker.accTradeValue24H > upbitTicker.accTradePrice24h) {
+                    combineList.add(
+                        toTicker(bithumbTicker)
+                    )
+                } else {
+                    combineList.add(
+                        toTicker(upbitTicker)
+                    )
+                }
             }
         }
         return combineList
@@ -41,7 +44,7 @@ object TickerFormatter {
     fun toTicker(bithumbTicker: BithumbTicker): Ticker = Ticker(
         bithumbTicker.accTradeValue24H,
         bithumbTicker.fluctate24H,
-        bithumbTicker.market,
+        bithumbTicker.getMarket(),
         bithumbTicker.prevClosingPrice,
         bithumbTicker.closingPrice,
         R.drawable.bithumb_img
