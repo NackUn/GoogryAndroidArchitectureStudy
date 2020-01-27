@@ -1,10 +1,10 @@
 package sample.nackun.com.studyfirst.ui.ticker
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import sample.nackun.com.studyfirst.base.BaseViewModel
 import sample.nackun.com.studyfirst.data.bithumb.BithumbRepository
@@ -27,8 +27,6 @@ class TickerViewModel(
     val selectedMarket: LiveData<String> get() = _selectedMarket
     private val _errMsg = MutableLiveData<Throwable>()
     val errMsg: LiveData<Throwable> get() = _errMsg
-
-    private val bithumbTickers = mutableListOf<BithumbTicker>()
 
     init {
         _tickers.value = mutableListOf()
@@ -59,42 +57,31 @@ class TickerViewModel(
                     bithumbRepository.requestAllTicker()
                         .subscribeOn(Schedulers.computation())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                            {
-                                it.bithumbData.filterKeys {
-                                    !it.equals("date")
-                                }.let {
-                                    val gson = Gson()
-                                    for ((key, value) in it) {
-                                        val bithumbTicker = gson.fromJson(value.toString(), BithumbTicker::class.java)
-                                        bithumbTicker.setMarket(key)
-                                        bithumbTickers.add(bithumbTicker)
-                                    }
+                        .map {
+                            val gson = Gson()
+                            it.bithumbData.filterKeys {
+                                !it.equals("date")
+                            }.map { bithumbTicker ->
+                                gson.fromJson(bithumbTicker.value.toString(), BithumbTicker::class.java).apply {
+                                    setMarket(bithumbTicker.key)
                                 }
-                            },
-                            {
-                                Log.e("aa12", it.toString())
                             }
+                        }.zipWith(
+                            upbitRepository.requestMarket()
+                                .subscribeOn(Schedulers.computation())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .flatMap { data ->
+                                    upbitRepository.requestTicker(data.filter {
+                                        it.market.startsWith(marketLike)
+                                    }.joinToString { it.market })
+                                        .subscribeOn(Schedulers.computation())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                            },
+                            BiFunction { t1: List<BithumbTicker>, t2: List<UpbitTicker> -> toTickers(t2, t1) }
                         )
+                        .subscribe()
                 )
             }
-            addDisposable(
-                upbitRepository.requestMarket()
-                    .subscribeOn(Schedulers.computation())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .flatMap { data ->
-                        upbitRepository.requestTicker(data.filter {
-                            it.market.startsWith(marketLike)
-                        }.joinToString { it.market })
-                            .subscribeOn(Schedulers.computation())
-                            .observeOn(AndroidSchedulers.mainThread())
-                    }.subscribe(
-                        {
-                            toTickers(it, bithumbTickers)
-                        },
-                        { Log.e("aa12", it.toString()) }
-                    )
-            )
         } ?: onError(IllegalStateException("Selected UpbitMarket is not exist"))
     }
 }
