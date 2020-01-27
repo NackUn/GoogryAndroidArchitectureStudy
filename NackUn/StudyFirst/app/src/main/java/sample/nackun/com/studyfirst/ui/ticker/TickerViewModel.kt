@@ -2,21 +2,22 @@ package sample.nackun.com.studyfirst.ui.ticker
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import sample.nackun.com.studyfirst.base.BaseViewModel
-import sample.nackun.com.studyfirst.data.bithumb.BithumbRepository
-import sample.nackun.com.studyfirst.data.upbit.UpbitRepository
+import sample.nackun.com.studyfirst.domain.GetBithumbTickersUseCase
+import sample.nackun.com.studyfirst.domain.GetUpbitMarketUseCase
+import sample.nackun.com.studyfirst.domain.GetUpbitTickersUseCase
 import sample.nackun.com.studyfirst.util.TickerFormatter
 import sample.nackun.com.studyfirst.vo.BithumbTicker
 import sample.nackun.com.studyfirst.vo.Ticker
 import sample.nackun.com.studyfirst.vo.UpbitTicker
 
 class TickerViewModel(
-    private val upbitRepository: UpbitRepository,
-    private val bithumbRepository: BithumbRepository
+    private val getUpbitMarketUseCase: GetUpbitMarketUseCase,
+    private val getUpbitTickersUseCase: GetUpbitTickersUseCase,
+    private val getBithumbTickersUseCase: GetBithumbTickersUseCase
 ) : BaseViewModel() {
 
     private val firstMarketName = "KRW"
@@ -54,29 +55,20 @@ class TickerViewModel(
         marketLike?.let {
             if (it.equals("KRW")) {
                 addDisposable(
-                    bithumbRepository.requestAllTicker()
+                    getBithumbTickersUseCase()
                         .subscribeOn(Schedulers.computation())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .map {
-                            val gson = Gson()
-                            it.bithumbData.filterKeys {
-                                !it.equals("date")
-                            }.map { bithumbTicker ->
-                                gson.fromJson(bithumbTicker.value.toString(), BithumbTicker::class.java).apply {
-                                    setMarket(bithumbTicker.key)
-                                }
-                            }
-                        }.zipWith(
-                            upbitRepository.requestMarket()
+                        .zipWith(
+                            getUpbitMarketUseCase()
                                 .subscribeOn(Schedulers.computation())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .flatMap { data ->
-                                    upbitRepository.requestTicker(data.filter {
+                                    getUpbitTickersUseCase(data.filter {
                                         it.market.startsWith(marketLike)
                                     }.joinToString { it.market })
                                         .subscribeOn(Schedulers.computation())
                                         .observeOn(AndroidSchedulers.mainThread())
-                            },
+                                },
                             BiFunction { t1: List<BithumbTicker>, t2: List<UpbitTicker> -> toTickers(t2, t1) }
                         )
                         .subscribe()
