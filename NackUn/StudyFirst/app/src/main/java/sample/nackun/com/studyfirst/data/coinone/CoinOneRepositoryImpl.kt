@@ -3,6 +3,6 @@ package sample.nackun.com.studyfirst.data.upbit
 class CoinOneRepositoryImpl(
     private val remoteDataSource: CoinOneDataSource
 ) : CoinOneRepository {
-    override fun requestAllTicker() =
+    override suspend fun requestAllTicker() =
         remoteDataSource.requestAllTicker()
 }

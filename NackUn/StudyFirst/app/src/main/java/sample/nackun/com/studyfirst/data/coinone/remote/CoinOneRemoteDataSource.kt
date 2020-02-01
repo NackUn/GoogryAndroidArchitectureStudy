@@ -6,6 +6,6 @@ import sample.nackun.com.studyfirst.network.CoinOneApi
 class CoinOneRemoteDataSource(
     private val retrofitService: CoinOneApi
 ) : CoinOneDataSource {
-    override fun requestAllTicker() =
+    override suspend fun requestAllTicker() =
         retrofitService.requestAllTicker()
 }

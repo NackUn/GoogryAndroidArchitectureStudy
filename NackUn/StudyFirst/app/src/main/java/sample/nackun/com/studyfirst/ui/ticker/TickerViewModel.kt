@@ -2,8 +2,8 @@ package sample.nackun.com.studyfirst.ui.ticker
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import sample.nackun.com.studyfirst.base.BaseViewModel
 import sample.nackun.com.studyfirst.domain.GetBithumbTickersUseCase
 import sample.nackun.com.studyfirst.domain.GetCoinOneTickersUseCase
@@ -53,15 +53,10 @@ class TickerViewModel(
     }
 
     fun showTickers(marketLike: String?) {
-        addDisposable(
-            getCoinOneTickersUseCase()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { onTickersLoaded(it.map { TickerFormatter.toTicker(it) }) },
-                    {}
-                )
-        )
+        viewModelScope.launch {
+            val coinOneTickers = getCoinOneTickersUseCase()
+            onTickersLoaded(coinOneTickers.map { TickerFormatter.toTicker(it) })
+        }
 //        marketLike?.let {
 //            if (it.equals("KRW")) {
 //                addDisposable(
