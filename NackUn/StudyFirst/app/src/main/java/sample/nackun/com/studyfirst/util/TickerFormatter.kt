@@ -3,6 +3,7 @@ package sample.nackun.com.studyfirst.util
 import android.graphics.Color
 import sample.nackun.com.studyfirst.R
 import sample.nackun.com.studyfirst.vo.BithumbTicker
+import sample.nackun.com.studyfirst.vo.CoinOneTicker
 import sample.nackun.com.studyfirst.vo.Ticker
 import sample.nackun.com.studyfirst.vo.UpbitTicker
 
@@ -48,6 +49,15 @@ object TickerFormatter {
         bithumbTicker.prevClosingPrice,
         bithumbTicker.closingPrice,
         R.drawable.bithumb_img
+    )
+
+    fun toTicker(coinOneTicker: CoinOneTicker): Ticker = Ticker(
+        coinOneTicker.first.toDouble() - coinOneTicker.last.toDouble(),
+        coinOneTicker.volume.toDouble() * coinOneTicker.last.toDouble(),
+        coinOneTicker.currency,
+        coinOneTicker.yesterdayLast.toDouble(),
+        coinOneTicker.last.toDouble(),
+        R.drawable.coinone_img
     )
 
     fun convertTo(target: List<Ticker>): List<Map<String, String>> {
