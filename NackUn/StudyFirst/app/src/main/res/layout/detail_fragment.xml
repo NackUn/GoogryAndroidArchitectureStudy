@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+                name="detailViewModel"
+                type="sample.nackun.com.studyfirst.ui.detail.DetailViewModel"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp">
+
+        <TextView
+                android:id="@+id/tv_coin_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/coinName"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@id/tv_current_price"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_weight="1"/>
+
+        <TextView
+                android:id="@+id/tv_current_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/currentPrice"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@id/tv_compare_price"
+                app:layout_constraintStart_toEndOf="@id/tv_coin_name"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_weight="1"/>
+
+        <TextView
+                android:id="@+id/tv_compare_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/comparePrice"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@id/tv_change_price"
+                app:layout_constraintStart_toEndOf="@id/tv_current_price"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_weight="1"/>
+
+        <TextView
+                android:id="@+id/tv_change_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/changePrice"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_compare_price"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_weight="1"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/detail_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_coin_name"
+                app:setItems="@{detailViewModel.tickers}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
