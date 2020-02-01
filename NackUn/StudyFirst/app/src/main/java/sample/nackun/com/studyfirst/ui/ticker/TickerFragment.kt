@@ -1,5 +1,7 @@
 package sample.nackun.com.studyfirst.ui.ticker
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.ticker_fragment.*
@@ -7,9 +9,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import sample.nackun.com.studyfirst.BR
 import sample.nackun.com.studyfirst.R
 import sample.nackun.com.studyfirst.base.BaseFragment
-import sample.nackun.com.studyfirst.base.BaseRecyclerView
 import sample.nackun.com.studyfirst.databinding.TickerFragmentBinding
 import sample.nackun.com.studyfirst.databinding.TickerItemBinding
+import sample.nackun.com.studyfirst.ui.detail.DetailActivity
+import sample.nackun.com.studyfirst.util.ClickAdapter
 
 class TickerFragment : BaseFragment<TickerFragmentBinding, TickerViewModel>(
     R.layout.ticker_fragment
@@ -17,7 +20,7 @@ class TickerFragment : BaseFragment<TickerFragmentBinding, TickerViewModel>(
     private val firstMarketName = "KRW"
     private val tickerAdapter =
         object :
-            BaseRecyclerView.BaseAdapter<List<Map<String, String>>, TickerItemBinding>(
+            ClickAdapter<List<Map<String, String>>, TickerItemBinding>(
                 R.layout.ticker_item,
                 BR.tickerItem
             ) {}
@@ -29,6 +32,7 @@ class TickerFragment : BaseFragment<TickerFragmentBinding, TickerViewModel>(
         initViewModel()
         setAdapter()
         setFirstTickers()
+        setOnClick()
     }
 
     private fun initViewModel() {
@@ -38,7 +42,7 @@ class TickerFragment : BaseFragment<TickerFragmentBinding, TickerViewModel>(
             showToast(it.message)
         }
 
-        vm.errMsg.observe(this, errMsgObserver)
+        vm.errMsg.observe(viewLifecycleOwner, errMsgObserver)
     }
 
     private fun setAdapter() {
@@ -47,4 +51,13 @@ class TickerFragment : BaseFragment<TickerFragmentBinding, TickerViewModel>(
 
     private fun setFirstTickers() =
         vm.showTickers(firstMarketName)
+
+    @SuppressLint("CheckResult")
+    private fun setOnClick() {
+        tickerAdapter.getOnItemClickObservable().subscribe {
+            val detailIntent = Intent(context, DetailActivity::class.java)
+            detailIntent.putExtra("currency", vm.tickers.value!!.get(it).get("tickerName"))
+            startActivity(detailIntent)
+        }
+    }
 }
