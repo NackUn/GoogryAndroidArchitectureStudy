@@ -1,5 +1,6 @@
 package sample.nackun.com.studyfirst.util
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import sample.nackun.com.studyfirst.R
 import sample.nackun.com.studyfirst.vo.BithumbTicker
@@ -8,28 +9,70 @@ import sample.nackun.com.studyfirst.vo.Ticker
 import sample.nackun.com.studyfirst.vo.UpbitTicker
 
 object TickerFormatter {
+
+    @SuppressLint("DefaultLocale")
     fun combine(
         upbitTickers: List<UpbitTicker>,
+        bithumbTickers: List<BithumbTicker>,
         coinOneTickers: List<CoinOneTicker>
     ): List<Ticker> {
         val combineList = mutableListOf<Ticker>()
         combineList.clear()
 
-        upbitTickers.forEach { upbitTicker ->
-            coinOneTickers.find { coinOneTicker ->
-                upbitTicker.market.split("-")[1].equals(coinOneTicker.currency.toUpperCase())
-            }?.let { coinOneTicker ->
-                if ((coinOneTicker.volume.toDouble() * coinOneTicker.last.toDouble()) > upbitTicker.accTradePrice24h) {
-                    combineList.add(
-                        toTicker(coinOneTicker)
-                    )
+        val markets = mutableListOf<String>()
+
+        upbitTickers.forEach {
+            markets.add(it.market.split("-")[1])
+        }
+        bithumbTickers.forEach {
+            if (!markets.contains(it.getMarket())) {
+                markets.add(it.getMarket())
+            }
+        }
+        coinOneTickers.forEach {
+            if (!markets.contains(it.currency.toUpperCase())) {
+                markets.add(it.currency.toUpperCase())
+            }
+        }
+
+        markets.forEach { market ->
+            val upbitTicker = upbitTickers.find {
+                it.market.split("-")[1].equals(market)
+            }?.let {
+                toTicker(it)
+            }
+
+            val bithumbTicker = bithumbTickers.find {
+                it.getMarket().equals(market)
+            }?.let {
+                toTicker(it)
+            }
+
+            val coinOneTicker = coinOneTickers.find {
+                it.currency.toUpperCase().equals(market)
+            }?.let {
+                toTicker(it)
+            }
+
+            val a = upbitTicker?.accTradePrice24h ?: 0.0
+            val b = bithumbTicker?.accTradePrice24h ?: 0.0
+            val c = coinOneTicker?.accTradePrice24h ?: 0.0
+
+            if (a > b) {
+                if (a > c) {
+                    combineList.add(upbitTicker!!)
                 } else {
-                    combineList.add(
-                        toTicker(upbitTicker)
-                    )
+                    combineList.add(coinOneTicker!!)
+                }
+            } else {
+                if (b > c) {
+                    combineList.add(bithumbTicker!!)
+                } else {
+                    combineList.add(coinOneTicker!!)
                 }
             }
         }
+
         return combineList
     }
 

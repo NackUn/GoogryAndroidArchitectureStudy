@@ -10,6 +10,7 @@ import sample.nackun.com.studyfirst.domain.GetCoinOneTickersUseCase
 import sample.nackun.com.studyfirst.domain.GetUpbitMarketUseCase
 import sample.nackun.com.studyfirst.domain.GetUpbitTickersUseCase
 import sample.nackun.com.studyfirst.util.TickerFormatter
+import sample.nackun.com.studyfirst.vo.BithumbTicker
 import sample.nackun.com.studyfirst.vo.CoinOneTicker
 import sample.nackun.com.studyfirst.vo.Ticker
 import sample.nackun.com.studyfirst.vo.UpbitTicker
@@ -39,8 +40,12 @@ class TickerViewModel(
         _errMsg.value = t
     }
 
-    private fun toTickers(upbitTickers: List<UpbitTicker>, coinOneTickers: List<CoinOneTicker>) {
-        onTickersLoaded(TickerFormatter.combine(upbitTickers, coinOneTickers))
+    private fun toTickers(
+        upbitTickers: List<UpbitTicker>,
+        bithumbTickers: List<BithumbTicker>,
+        coinOneTickers: List<CoinOneTicker>
+    ) {
+        onTickersLoaded(TickerFormatter.combine(upbitTickers, bithumbTickers, coinOneTickers))
     }
 
     private fun onTickersLoaded(tickers: List<Ticker>) {
@@ -54,40 +59,17 @@ class TickerViewModel(
 
     fun showTickers(marketLike: String?) {
         viewModelScope.launch {
-            val coinOneTickers = getCoinOneTickersUseCase()
-
             val upbitMarket = getUpbitMarketUseCase()
             val strUpbitMarket = upbitMarket.filter {
                 it.market.startsWith(marketLike ?: "KRW")
             }.joinToString { it.market }
             val upbitTickers = getUpbitTickersUseCase(strUpbitMarket)
 
-            toTickers(upbitTickers, coinOneTickers)
+            val bithumbTickers = getBithumbTickersUseCase()
+
+            val coinOneTickers = getCoinOneTickersUseCase()
+
+            toTickers(upbitTickers, bithumbTickers, coinOneTickers)
         }
-//        marketLike?.let {
-//            if (it.equals("KRW")) {
-//                addDisposable(
-//                    getBithumbTickersUseCase()
-//                        .subscribeOn(Schedulers.computation())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .zipWith(
-//                            getUpbitMarketUseCase()
-//                                .subscribeOn(Schedulers.computation())
-//                                .observeOn(AndroidSchedulers.mainThread())
-//                                .flatMap { data ->
-//                                    getUpbitTickersUseCase(data.filter {
-//                                        it.market.startsWith(marketLike)
-//                                    }.joinToString { it.market })
-//                                        .subscribeOn(Schedulers.computation())
-//                                        .observeOn(AndroidSchedulers.mainThread())
-//                                },
-//                            BiFunction { bithumbTickers: List<BithumbTicker>, upbitTickers: List<UpbitTicker> ->
-//                                toTickers(upbitTickers, bithumbTickers)
-//                            }
-//                        )
-//                        .subscribe()
-//                )
-//            }
-//        } ?: onError(IllegalStateException("Selected UpbitMarket is not exist"))
     }
 }
