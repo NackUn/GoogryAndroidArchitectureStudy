@@ -1,10 +1,7 @@
 package sample.nackun.com.studyfirst.di
 
 import org.koin.dsl.module
-import sample.nackun.com.studyfirst.domain.GetBithumbTickersUseCase
-import sample.nackun.com.studyfirst.domain.GetCoinOneTickersUseCase
-import sample.nackun.com.studyfirst.domain.GetUpbitMarketUseCase
-import sample.nackun.com.studyfirst.domain.GetUpbitTickersUseCase
+import sample.nackun.com.studyfirst.domain.*
 
 val useCaseModule = module {
     single {
@@ -21,5 +18,13 @@ val useCaseModule = module {
 
     single {
         GetCoinOneTickersUseCase(get())
+    }
+
+    single {
+        GetBithumbTickerUseCase(get())
+    }
+
+    single {
+        GetCoinOneTickerUseCase(get())
     }
 }
