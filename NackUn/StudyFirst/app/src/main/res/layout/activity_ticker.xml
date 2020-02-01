@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".ui.ticker.TickerActivity">
     <fragment
             android:id="@+id/tickerFragment"
+            android:name="sample.nackun.com.studyfirst.ui.ticker.TickerFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="sample.nackun.com.studyfirst.ui.ticker.TickerFragment"/>
-</RelativeLayout>
+            android:layout_height="match_parent"/>
+</LinearLayout>
