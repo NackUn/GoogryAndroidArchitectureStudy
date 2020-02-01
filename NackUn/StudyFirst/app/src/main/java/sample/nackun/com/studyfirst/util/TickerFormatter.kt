@@ -10,18 +10,18 @@ import sample.nackun.com.studyfirst.vo.UpbitTicker
 object TickerFormatter {
     fun combine(
         upbitTickers: List<UpbitTicker>,
-        bithumbTickers: List<BithumbTicker>
+        coinOneTickers: List<CoinOneTicker>
     ): List<Ticker> {
         val combineList = mutableListOf<Ticker>()
         combineList.clear()
 
         upbitTickers.forEach { upbitTicker ->
-            bithumbTickers.find { bithumbTicker ->
-                upbitTicker.market.split("-")[1].equals(bithumbTicker.getMarket())
-            }?.let { bithumbTicker ->
-                if (bithumbTicker.accTradeValue24H > upbitTicker.accTradePrice24h) {
+            coinOneTickers.find { coinOneTicker ->
+                upbitTicker.market.split("-")[1].equals(coinOneTicker.currency.toUpperCase())
+            }?.let { coinOneTicker ->
+                if ((coinOneTicker.volume.toDouble() * coinOneTicker.last.toDouble()) > upbitTicker.accTradePrice24h) {
                     combineList.add(
-                        toTicker(bithumbTicker)
+                        toTicker(coinOneTicker)
                     )
                 } else {
                     combineList.add(
@@ -52,8 +52,8 @@ object TickerFormatter {
     )
 
     fun toTicker(coinOneTicker: CoinOneTicker): Ticker = Ticker(
-        coinOneTicker.first.toDouble() - coinOneTicker.last.toDouble(),
         coinOneTicker.volume.toDouble() * coinOneTicker.last.toDouble(),
+        coinOneTicker.first.toDouble() - coinOneTicker.last.toDouble(),
         coinOneTicker.currency,
         coinOneTicker.yesterdayLast.toDouble(),
         coinOneTicker.last.toDouble(),

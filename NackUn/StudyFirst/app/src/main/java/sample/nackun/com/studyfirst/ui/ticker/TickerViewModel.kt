@@ -10,7 +10,7 @@ import sample.nackun.com.studyfirst.domain.GetCoinOneTickersUseCase
 import sample.nackun.com.studyfirst.domain.GetUpbitMarketUseCase
 import sample.nackun.com.studyfirst.domain.GetUpbitTickersUseCase
 import sample.nackun.com.studyfirst.util.TickerFormatter
-import sample.nackun.com.studyfirst.vo.BithumbTicker
+import sample.nackun.com.studyfirst.vo.CoinOneTicker
 import sample.nackun.com.studyfirst.vo.Ticker
 import sample.nackun.com.studyfirst.vo.UpbitTicker
 
@@ -39,8 +39,8 @@ class TickerViewModel(
         _errMsg.value = t
     }
 
-    private fun toTickers(upbitTickers: List<UpbitTicker>, bithumbTickers: List<BithumbTicker>) {
-        onTickersLoaded(TickerFormatter.combine(upbitTickers, bithumbTickers))
+    private fun toTickers(upbitTickers: List<UpbitTicker>, coinOneTickers: List<CoinOneTicker>) {
+        onTickersLoaded(TickerFormatter.combine(upbitTickers, coinOneTickers))
     }
 
     private fun onTickersLoaded(tickers: List<Ticker>) {
@@ -55,7 +55,14 @@ class TickerViewModel(
     fun showTickers(marketLike: String?) {
         viewModelScope.launch {
             val coinOneTickers = getCoinOneTickersUseCase()
-            onTickersLoaded(coinOneTickers.map { TickerFormatter.toTicker(it) })
+
+            val upbitMarket = getUpbitMarketUseCase()
+            val strUpbitMarket = upbitMarket.filter {
+                it.market.startsWith(marketLike ?: "KRW")
+            }.joinToString { it.market }
+            val upbitTickers = getUpbitTickersUseCase(strUpbitMarket)
+
+            toTickers(upbitTickers, coinOneTickers)
         }
 //        marketLike?.let {
 //            if (it.equals("KRW")) {
