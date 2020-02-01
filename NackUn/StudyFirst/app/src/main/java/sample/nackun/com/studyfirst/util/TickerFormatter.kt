@@ -94,10 +94,11 @@ object TickerFormatter {
         R.drawable.bithumb_img
     )
 
+    @SuppressLint("DefaultLocale")
     fun toTicker(coinOneTicker: CoinOneTicker): Ticker = Ticker(
         coinOneTicker.volume.toDouble() * coinOneTicker.last.toDouble(),
         coinOneTicker.first.toDouble() - coinOneTicker.last.toDouble(),
-        coinOneTicker.currency,
+        coinOneTicker.currency.toUpperCase(),
         coinOneTicker.yesterdayLast.toDouble(),
         coinOneTicker.last.toDouble(),
         R.drawable.coinone_img
