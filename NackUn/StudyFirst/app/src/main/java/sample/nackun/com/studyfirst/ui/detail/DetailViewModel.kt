@@ -3,6 +3,7 @@ package sample.nackun.com.studyfirst.ui.detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import sample.nackun.com.studyfirst.base.BaseViewModel
 import sample.nackun.com.studyfirst.domain.GetBithumbTickerUseCase
@@ -39,23 +40,23 @@ class DetailViewModel(
             val tickers: MutableList<Ticker> = mutableListOf()
 
             try {
-                val upbitTickers = getUpbitTickersUseCase("KRW-" + tickerName)
-                val upbitTicker = upbitTickers.last()
+                val upbitTickers = async { getUpbitTickersUseCase("KRW-" + tickerName) }
+                val upbitTicker = upbitTickers.await().last()
                 tickers.add(TickerFormatter.toTicker(upbitTicker))
             } catch (cause: Throwable) {
 
             }
 
             try {
-                val bithumbTicker = getBithumbTickerUseCase(tickerName)
-                tickers.add(TickerFormatter.toTicker(bithumbTicker))
+                val bithumbTicker = async { getBithumbTickerUseCase(tickerName) }
+                tickers.add(TickerFormatter.toTicker(bithumbTicker.await()))
             } catch (cause: Throwable) {
 
             }
 
             try {
-                val coinOneTicker = getCoinOneTickerUseCase(tickerName)
-                tickers.add(TickerFormatter.toTicker(coinOneTicker))
+                val coinOneTicker = async { getCoinOneTickerUseCase(tickerName) }
+                tickers.add(TickerFormatter.toTicker(coinOneTicker.await()))
             } catch (cause: Throwable) {
 
             }

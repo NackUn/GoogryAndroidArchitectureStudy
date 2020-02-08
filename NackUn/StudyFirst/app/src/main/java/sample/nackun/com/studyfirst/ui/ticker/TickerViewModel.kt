@@ -3,6 +3,7 @@ package sample.nackun.com.studyfirst.ui.ticker
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import sample.nackun.com.studyfirst.base.BaseViewModel
 import sample.nackun.com.studyfirst.domain.GetBithumbTickersUseCase
@@ -63,13 +64,13 @@ class TickerViewModel(
             val strUpbitMarket = upbitMarket.filter {
                 it.market.startsWith(marketLike ?: "KRW")
             }.joinToString { it.market }
-            val upbitTickers = getUpbitTickersUseCase(strUpbitMarket)
+            val upbitTickers = async { getUpbitTickersUseCase(strUpbitMarket) }
 
-            val bithumbTickers = getBithumbTickersUseCase()
+            val bithumbTickers = async { getBithumbTickersUseCase() }
 
-            val coinOneTickers = getCoinOneTickersUseCase()
+            val coinOneTickers = async { getCoinOneTickersUseCase() }
 
-            toTickers(upbitTickers, bithumbTickers, coinOneTickers)
+            toTickers(upbitTickers.await(), bithumbTickers.await(), coinOneTickers.await())
         }
     }
 }
